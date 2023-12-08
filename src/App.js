@@ -1,23 +1,29 @@
-import logo from './logo.svg';
-import './App.css';
+import { useState } from "react";
+import "./App.css";
 
 function App() {
+  const [message, setMessage] = useState("");
+  const [buttonText, setButtonText] = useState(false);
+  const messageHandle = async () => {
+    try {
+      const response = await fetch("http://localhost:4000/api");
+      if (!response.ok) {
+        throw Error("Network response not ok");
+      }
+      const data = await response.json();
+      setMessage(data);
+      setButtonText(!buttonText);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <button onClick={messageHandle}>
+        {buttonText ? "Hide Message" : "Get Message"}
+      </button>
+      {buttonText && <h1>{message}</h1>}
     </div>
   );
 }
